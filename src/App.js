@@ -1,9 +1,10 @@
 import "./App.css";
+import GeneratorTimer from "./components/GeneratorTimerApp";
 
 function App() {
   return (
     <div>
-      <h1>Таймер Генератора</h1>
+      <GeneratorTimer />
     </div>
   );
 }
