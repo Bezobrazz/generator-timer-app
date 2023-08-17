@@ -1,27 +1,33 @@
+// Pagination.js
 import React from "react";
 
-const Pagination = ({ currentPage, totalPages, onPageChange }) => {
-  return (
-    <div className="pagination">
-      <button
-        className="btn btn-sm btn-secondary"
-        onClick={() => onPageChange(currentPage - 1)}
-        disabled={currentPage === 1}
-      >
-        Попередня сторінка
-      </button>
-      <span className="mx-2">
-        Сторінка {currentPage} з {totalPages}
-      </span>
-      <button
-        className="btn btn-sm btn-secondary"
-        onClick={() => onPageChange(currentPage + 1)}
-        disabled={currentPage === totalPages}
-      >
-        Наступна сторінка
-      </button>
-    </div>
+function Pagination({ currentPage, totalPages, onPageChange }) {
+  const pageNumbers = Array.from(
+    { length: totalPages },
+    (_, index) => index + 1
   );
-};
+
+  return (
+    <nav>
+      <ul className="pagination">
+        {pageNumbers.map((pageNumber) => (
+          <li
+            key={pageNumber}
+            className={`page-item ${
+              pageNumber === currentPage ? "active" : ""
+            }`}
+          >
+            <button
+              className="page-link"
+              onClick={() => onPageChange(pageNumber)}
+            >
+              {pageNumber}
+            </button>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  );
+}
 
 export default Pagination;

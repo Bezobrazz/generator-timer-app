@@ -75,14 +75,27 @@ function GeneratorTimer() {
     return formattedTime.trim();
   };
 
+  // const startStopTimer = () => {
+  //   if (running) {
+  //     clearInterval(timerInterval.current);
+  //     const currentDate = new Date();
+  //     setHistory([
+  //       ...history,
+  //       { id: generateUniqueId(), time, date: currentDate },
+  //     ]);
+  //     setTime(0);
+  //   }
+
+  //   setRunning(!running);
+  // };
+
   const startStopTimer = () => {
     if (running) {
       clearInterval(timerInterval.current);
       const currentDate = new Date();
-      setHistory([
-        ...history,
-        { id: generateUniqueId(), time, date: currentDate },
-      ]);
+      const newEntry = { id: generateUniqueId(), time, date: currentDate };
+      const updatedHistory = [newEntry, ...history]; // Додаємо новий запис першим елементом
+      setHistory(updatedHistory);
       setTime(0);
     }
 
@@ -99,9 +112,9 @@ function GeneratorTimer() {
     return totalTimeInSeconds;
   };
 
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const displayedHistory = history.slice(startIndex, endIndex);
+  const displayedHistory = history
+    .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+    .sort((a, b) => b.date - a.date);
 
   return (
     <div className="container mt-4 text-center">
@@ -127,32 +140,29 @@ function GeneratorTimer() {
         </button>
       </div>
       <ul className="list-group">
-        {displayedHistory
-          .slice()
-          .reverse()
-          .map((entry, index) => (
-            <li
-              key={entry.id}
-              className={`list-group-item ${
-                index % 2 === 0
-                  ? "list-group-item-primary"
-                  : "list-group-item-secondary"
-              } mb-2`}
-            >
-              <div className="d-flex justify-content-between align-items-center">
-                <span>
-                  {new Date(entry.date).toLocaleString()} -{" "}
-                  {formatTime(entry.time)}
-                </span>
-                <button
-                  className="btn btn-sm btn-danger"
-                  onClick={() => handleDeleteHistory(entry.id)}
-                >
-                  <i className="bi bi-trash"></i>
-                </button>
-              </div>
-            </li>
-          ))}
+        {displayedHistory.map((entry, index) => (
+          <li
+            key={entry.id}
+            className={`list-group-item ${
+              index % 2 === 0
+                ? "list-group-item-primary"
+                : "list-group-item-secondary"
+            } mb-2`}
+          >
+            <div className="d-flex justify-content-between align-items-center">
+              <span>
+                {new Date(entry.date).toLocaleString()} -{" "}
+                {formatTime(entry.time)}
+              </span>
+              <button
+                className="btn btn-sm btn-danger"
+                onClick={() => handleDeleteHistory(entry.id)}
+              >
+                <i className="bi bi-trash"></i>
+              </button>
+            </div>
+          </li>
+        ))}
       </ul>
       <Pagination
         currentPage={currentPage}
