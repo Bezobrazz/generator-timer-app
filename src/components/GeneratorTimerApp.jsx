@@ -1,10 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap-icons/font/bootstrap-icons.css";
+import Popup from "./Popup";
 
 function GeneratorTimer() {
   const [running, setRunning] = useState(false);
   const [time, setTime] = useState(0);
   const [history, setHistory] = useState([]);
+  const [showPopup, setShowPopup] = useState(false);
+
   const timerInterval = useRef(null);
 
   useEffect(() => {
@@ -71,6 +75,13 @@ function GeneratorTimer() {
     setHistory([]);
   };
 
+  const getTotalTimeInSeconds = () => {
+    const totalTimeInSeconds = history.reduce((total, entry) => {
+      return total + entry.time;
+    }, 0);
+    return totalTimeInSeconds;
+  };
+
   return (
     <div className="container mt-4 text-center">
       <h1>Таймер Генератора</h1>
@@ -84,10 +95,14 @@ function GeneratorTimer() {
       >
         {running ? "Стоп" : "Старт"}
       </button>
+      <p className="fs-5">
+        Загальний час роботи генератора: {formatTime(getTotalTimeInSeconds())}
+      </p>
       <h6>Історія</h6>
+
       <div className="d-flex justify-content-end">
         <button onClick={clearHistory} className="btn btn-sm  btn-danger mb-1">
-          видалити історію
+          видалити всю історію
         </button>
       </div>
       <ul className="list-group">
@@ -118,6 +133,13 @@ function GeneratorTimer() {
             </li>
           ))}
       </ul>
+
+      <Popup
+        isOpen={showPopup}
+        onClose={() => setShowPopup(false)}
+        onReload={handleReload}
+        onContinue={handleContinue}
+      />
     </div>
   );
 }
