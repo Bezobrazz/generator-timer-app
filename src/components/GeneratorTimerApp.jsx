@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useRef } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
-import Popup from "./Popup";
+import Pagination from "./Pagination";
 
 function GeneratorTimer() {
   const [running, setRunning] = useState(false);
   const [time, setTime] = useState(0);
   const [history, setHistory] = useState([]);
-  const [showPopup, setShowPopup] = useState(false);
-
   const timerInterval = useRef(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
   useEffect(() => {
     const storedHistory = localStorage.getItem("timerHistory");
@@ -17,6 +17,23 @@ function GeneratorTimer() {
       setHistory(JSON.parse(storedHistory));
     }
   }, []);
+
+  useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      if (running) {
+        event.preventDefault();
+        event.returnValue =
+          "Обережно! Перезавантаження сторінки приведе до обнулення працюючого таймера";
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      clearInterval(timerInterval.current);
+    };
+  }, [running]);
 
   useEffect(() => {
     if (running) {
@@ -82,6 +99,10 @@ function GeneratorTimer() {
     return totalTimeInSeconds;
   };
 
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const displayedHistory = history.slice(startIndex, endIndex);
+
   return (
     <div className="container mt-4 text-center">
       <h1>Таймер Генератора</h1>
@@ -106,7 +127,7 @@ function GeneratorTimer() {
         </button>
       </div>
       <ul className="list-group">
-        {history
+        {displayedHistory
           .slice()
           .reverse()
           .map((entry, index) => (
@@ -133,12 +154,10 @@ function GeneratorTimer() {
             </li>
           ))}
       </ul>
-
-      <Popup
-        isOpen={showPopup}
-        onClose={() => setShowPopup(false)}
-        onReload={handleReload}
-        onContinue={handleContinue}
+      <Pagination
+        currentPage={currentPage}
+        totalPages={Math.ceil(history.length / itemsPerPage)}
+        onPageChange={setCurrentPage}
       />
     </div>
   );
