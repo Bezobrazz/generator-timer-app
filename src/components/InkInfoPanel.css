@@ -1,0 +1,19 @@
+.ink-info-panel {
+  padding: 20px;
+  border: 2px solid #333;
+  border-radius: 10px;
+  margin-top: 20px;
+}
+
+.ink-progress {
+  background-color: #22d319;
+  height: 20px;
+  border-radius: 10px;
+  margin-top: 10px;
+  overflow: hidden;
+}
+
+.ink-progress-bar {
+  background-color: #f00;
+  height: 100%;
+}

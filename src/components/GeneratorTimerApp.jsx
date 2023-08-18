@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import Pagination from "./Pagination";
+import InkInfoPanel from "./InkInfoPanel";
 
 function GeneratorTimer() {
   const [running, setRunning] = useState(false);
@@ -75,20 +76,6 @@ function GeneratorTimer() {
     return formattedTime.trim();
   };
 
-  // const startStopTimer = () => {
-  //   if (running) {
-  //     clearInterval(timerInterval.current);
-  //     const currentDate = new Date();
-  //     setHistory([
-  //       ...history,
-  //       { id: generateUniqueId(), time, date: currentDate },
-  //     ]);
-  //     setTime(0);
-  //   }
-
-  //   setRunning(!running);
-  // };
-
   const startStopTimer = () => {
     if (running) {
       clearInterval(timerInterval.current);
@@ -132,9 +119,14 @@ function GeneratorTimer() {
       <p className="fs-5">
         Загальний час роботи генератора: {formatTime(getTotalTimeInSeconds())}
       </p>
-      <h6>Історія</h6>
 
-      <div className="d-flex justify-content-end">
+      <InkInfoPanel
+        totalTimeInSeconds={getTotalTimeInSeconds()}
+        onReset={clearHistory}
+      />
+
+      <div className="d-flex justify-content-between">
+        <h6 className="align-self-end">Історія</h6>
         <button onClick={clearHistory} className="btn btn-sm  btn-danger mb-1">
           видалити всю історію
         </button>
