@@ -3,11 +3,13 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import Pagination from "./Pagination";
 import InkInfoPanel from "./InkInfoPanel";
+import FuelConsumptionCalculator from "./FuelConsumptionCalculator";
 
 function GeneratorTimer() {
   const [running, setRunning] = useState(false);
   const [time, setTime] = useState(0);
   const [history, setHistory] = useState([]);
+  const [fuelHistory, setFuelHistory] = useState([]);
   const timerInterval = useRef(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
@@ -103,6 +105,26 @@ function GeneratorTimer() {
     .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
     .sort((a, b) => b.date - a.date);
 
+  const handleFuelFilled = (newFuelEntry) => {
+    setFuelHistory([...fuelHistory, newFuelEntry]);
+  };
+  const handleDeleteFuelEntry = (index) => {
+    const updatedFuelHistory = [...fuelHistory];
+    updatedFuelHistory.splice(index, 1);
+    setFuelHistory(updatedFuelHistory);
+  };
+
+  useEffect(() => {
+    const storedFuelHistory = localStorage.getItem("fuelHistory");
+    if (storedFuelHistory) {
+      setFuelHistory(JSON.parse(storedFuelHistory));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("fuelHistory", JSON.stringify(fuelHistory));
+  }, [fuelHistory]);
+
   return (
     <div className="container mt-4 text-center">
       <h1>Таймер Генератора</h1>
@@ -125,8 +147,36 @@ function GeneratorTimer() {
         onReset={clearHistory}
       />
 
+      <FuelConsumptionCalculator
+        onFuelFilled={handleFuelFilled}
+        fuelHistory={fuelHistory}
+        setFuelHistory={setFuelHistory}
+      />
+
+      <h6 className="d-flex ">Історія заправок пальним</h6>
+      <ul className="list-group">
+        {fuelHistory.reverse().map((entry, index) => (
+          <li
+            key={index}
+            className={`list-group-item list-group-item-warning mb-2`}
+          >
+            <div className="d-flex justify-content-between align-items-center">
+              <span>
+                {entry.date} - {entry.amount} л
+              </span>
+              <button
+                className="btn btn-sm btn-danger"
+                onClick={() => handleDeleteFuelEntry(index)}
+              >
+                <i className="bi bi-trash"></i>
+              </button>
+            </div>
+          </li>
+        ))}
+      </ul>
+
       <div className="d-flex justify-content-between">
-        <h6 className="align-self-end">Історія</h6>
+        <h6 className="align-self-end">Історія роботи генератора</h6>
         <button onClick={clearHistory} className="btn btn-sm  btn-danger mb-1">
           видалити всю історію
         </button>
