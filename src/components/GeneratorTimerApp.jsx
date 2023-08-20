@@ -106,8 +106,10 @@ function GeneratorTimer() {
     .sort((a, b) => b.date - a.date);
 
   const handleFuelFilled = (newFuelEntry) => {
-    setFuelHistory([...fuelHistory, newFuelEntry]);
+    const updatedFuelHistory = [newFuelEntry, ...fuelHistory];
+    setFuelHistory(updatedFuelHistory);
   };
+
   const handleDeleteFuelEntry = (index) => {
     const updatedFuelHistory = [...fuelHistory];
     updatedFuelHistory.splice(index, 1);
@@ -150,30 +152,8 @@ function GeneratorTimer() {
       <FuelConsumptionCalculator
         onFuelFilled={handleFuelFilled}
         fuelHistory={fuelHistory}
-        setFuelHistory={setFuelHistory}
+        onDeleteFuelEntry={handleDeleteFuelEntry}
       />
-
-      <h6 className="d-flex ">Історія заправок пальним</h6>
-      <ul className="list-group">
-        {fuelHistory.reverse().map((entry, index) => (
-          <li
-            key={index}
-            className={`list-group-item list-group-item-warning mb-2`}
-          >
-            <div className="d-flex justify-content-between align-items-center">
-              <span>
-                {entry.date} - {entry.amount} л
-              </span>
-              <button
-                className="btn btn-sm btn-danger"
-                onClick={() => handleDeleteFuelEntry(index)}
-              >
-                <i className="bi bi-trash"></i>
-              </button>
-            </div>
-          </li>
-        ))}
-      </ul>
 
       <div className="d-flex justify-content-between">
         <h6 className="align-self-end">Історія роботи генератора</h6>

@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 
-// import "./FuelConsumptionCalculator.css";
-
-function FuelConsumptionCalculator({ onFuelFilled }) {
+function FuelConsumptionCalculator({
+  onFuelFilled,
+  fuelHistory,
+  onDeleteFuelEntry,
+}) {
   const [fuelAmount, setFuelAmount] = useState("");
   const [isFilled] = useState(false);
 
@@ -45,6 +47,31 @@ function FuelConsumptionCalculator({ onFuelFilled }) {
           Залити пальне
         </button>
       </div>
+      <h6 className="d-flex ">Історія заправок пальним</h6>
+      <ul className="list-group">
+        {fuelHistory.map((entry, index) => (
+          <li
+            key={index}
+            className={`list-group-item ${
+              index % 2 === 0
+                ? "list-group-item-warning"
+                : "list-group-item-secondary"
+            } mb-2`}
+          >
+            <div className="d-flex justify-content-between align-items-center">
+              <span>
+                {entry.date} - {entry.amount} л
+              </span>
+              <button
+                className="btn btn-sm btn-danger"
+                onClick={() => onDeleteFuelEntry(index)}
+              >
+                <i className="bi bi-trash"></i>
+              </button>
+            </div>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
