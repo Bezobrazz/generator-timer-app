@@ -7,9 +7,10 @@ function FuelConsumptionCalculator({
   onDeleteFuelEntry,
 }) {
   const [fuelAmount, setFuelAmount] = useState("");
-  const [isFilled] = useState(false);
+  // const [isFilled] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
+  // const [totalFuelConsumed, setTotalFuelConsumed] = useState(0);
 
   const handleFuelAmountChange = (event) => {
     const input = event.target.value;
@@ -27,6 +28,8 @@ function FuelConsumptionCalculator({
         amount: parseFloat(fuelAmount),
       };
       onFuelFilled(newFuelEntry);
+      // setTotalFuelConsumed((prevTotal) => prevTotal + parseFloat(fuelAmount)); // Додайте цей рядок
+
       setFuelAmount("");
     }
   };
@@ -40,6 +43,7 @@ function FuelConsumptionCalculator({
   return (
     <div className="fuel-consumption-calculator">
       <h2>Споживання пального</h2>
+
       <div className="input-group mb-3">
         <input
           type="text"
@@ -51,7 +55,7 @@ function FuelConsumptionCalculator({
         <button
           onClick={handleFuelSubmit}
           className="btn btn-success"
-          disabled={isFilled}
+          // disabled={isFilled}
         >
           Залити пальне
         </button>

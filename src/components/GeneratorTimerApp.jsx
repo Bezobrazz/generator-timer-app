@@ -13,6 +13,8 @@ function GeneratorTimer() {
   const timerInterval = useRef(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
+  const [totalFuelConsumed, setTotalFuelConsumed] = useState(0);
+  const [totalWorkingTimeInSeconds, setTotalWorkingTimeInSeconds] = useState(0);
 
   useEffect(() => {
     const storedHistory = localStorage.getItem("timerHistory");
@@ -83,7 +85,7 @@ function GeneratorTimer() {
       clearInterval(timerInterval.current);
       const currentDate = new Date();
       const newEntry = { id: generateUniqueId(), time, date: currentDate };
-      const updatedHistory = [newEntry, ...history]; // Додаємо новий запис першим елементом
+      const updatedHistory = [newEntry, ...history];
       setHistory(updatedHistory);
       setTime(0);
     }
@@ -98,6 +100,7 @@ function GeneratorTimer() {
     const totalTimeInSeconds = history.reduce((total, entry) => {
       return total + entry.time;
     }, 0);
+    setTotalWorkingTimeInSeconds(totalTimeInSeconds);
     return totalTimeInSeconds;
   };
 
@@ -109,6 +112,11 @@ function GeneratorTimer() {
     const updatedFuelHistory = [newFuelEntry, ...fuelHistory];
     setFuelHistory(updatedFuelHistory);
   };
+
+  // const handleFuelFilled = (newFuelEntry) => {
+  //   setFuelHistory([...fuelHistory, newFuelEntry]);
+  //   setTotalFuelConsumed((prevTotal) => prevTotal + newFuelEntry.amount);
+  // };
 
   const handleDeleteFuelEntry = (index) => {
     const updatedFuelHistory = [...fuelHistory];
@@ -127,6 +135,11 @@ function GeneratorTimer() {
     localStorage.setItem("fuelHistory", JSON.stringify(fuelHistory));
   }, [fuelHistory]);
 
+  const averageFuelConsumptionPerHour =
+    totalFuelConsumed > 0
+      ? (totalFuelConsumed / totalWorkingTimeInSeconds) * 3600
+      : 0;
+
   return (
     <div className="container mt-4 text-center">
       <h1>Таймер Генератора</h1>
@@ -144,6 +157,11 @@ function GeneratorTimer() {
         Загальний час роботи генератора: {formatTime(getTotalTimeInSeconds())}
       </p>
 
+      <p className="fs-5">
+        Середнє споживання пального: {averageFuelConsumptionPerHour.toFixed(2)}{" "}
+        л/год
+      </p>
+
       <InkInfoPanel
         totalTimeInSeconds={getTotalTimeInSeconds()}
         onReset={clearHistory}
@@ -153,10 +171,13 @@ function GeneratorTimer() {
         onFuelFilled={handleFuelFilled}
         fuelHistory={fuelHistory}
         onDeleteFuelEntry={handleDeleteFuelEntry}
+        // totalFuelConsumed={totalFuelConsumed}
+        // setTotalFuelConsumed={setTotalFuelConsumed}
       />
 
       <div className="d-flex justify-content-between">
         <h6 className="align-self-end">Історія роботи генератора</h6>
+
         <button onClick={clearHistory} className="btn btn-sm  btn-danger mb-1">
           видалити всю історію
         </button>
