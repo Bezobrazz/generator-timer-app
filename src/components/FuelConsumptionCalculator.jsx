@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Pagination from "./Pagination";
 
 function FuelConsumptionCalculator({
   onFuelFilled,
@@ -7,6 +8,8 @@ function FuelConsumptionCalculator({
 }) {
   const [fuelAmount, setFuelAmount] = useState("");
   const [isFilled] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
   const handleFuelAmountChange = (event) => {
     const input = event.target.value;
@@ -27,6 +30,12 @@ function FuelConsumptionCalculator({
       setFuelAmount("");
     }
   };
+
+  const sortedFuelHistory = [...fuelHistory].sort((a, b) => a.date - b.date);
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const displayedFuelHistory = sortedFuelHistory.slice(startIndex, endIndex);
 
   return (
     <div className="fuel-consumption-calculator">
@@ -49,7 +58,7 @@ function FuelConsumptionCalculator({
       </div>
       <h6 className="d-flex ">Історія заправок пальним</h6>
       <ul className="list-group">
-        {fuelHistory.map((entry, index) => (
+        {displayedFuelHistory.map((entry, index) => (
           <li
             key={index}
             className={`list-group-item ${
@@ -72,6 +81,11 @@ function FuelConsumptionCalculator({
           </li>
         ))}
       </ul>
+      <Pagination
+        currentPage={currentPage}
+        totalPages={Math.ceil(sortedFuelHistory.length / itemsPerPage)}
+        onPageChange={setCurrentPage}
+      />
     </div>
   );
 }
