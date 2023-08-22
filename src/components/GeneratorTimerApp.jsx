@@ -13,6 +13,8 @@ function GeneratorTimer() {
   const timerInterval = useRef(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
+  const [totalFuelConsumed, setTotalFuelConsumed] = useState(0);
+  const [totalWorkingTimeInSeconds, setTotalWorkingTimeInSeconds] = useState(0);
 
   useEffect(() => {
     const storedHistory = localStorage.getItem("timerHistory");
@@ -125,7 +127,23 @@ function GeneratorTimer() {
 
   useEffect(() => {
     localStorage.setItem("fuelHistory", JSON.stringify(fuelHistory));
-  }, [fuelHistory]);
+    const totalTimeInSeconds = history.reduce(
+      (total, entry) => total + entry.time,
+      0
+    );
+    setTotalWorkingTimeInSeconds(totalTimeInSeconds);
+
+    const totalConsumedFuel = fuelHistory.reduce(
+      (total, entry) => total + entry.amount,
+      0
+    );
+    setTotalFuelConsumed(totalConsumedFuel);
+  }, [fuelHistory, history]);
+
+  const averageFuelConsumptionPerHour =
+    totalFuelConsumed > 0
+      ? totalFuelConsumed / (totalWorkingTimeInSeconds / 3600) // Перетворюємо час в години
+      : 0;
 
   return (
     <div className="container mt-4 text-center">
@@ -153,6 +171,7 @@ function GeneratorTimer() {
         onFuelFilled={handleFuelFilled}
         fuelHistory={fuelHistory}
         onDeleteFuelEntry={handleDeleteFuelEntry}
+        averageFuelConsumptionPerHour={averageFuelConsumptionPerHour}
       />
 
       <div className="d-flex justify-content-between">

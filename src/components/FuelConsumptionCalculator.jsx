@@ -5,6 +5,7 @@ function FuelConsumptionCalculator({
   onFuelFilled,
   fuelHistory,
   onDeleteFuelEntry,
+  averageFuelConsumptionPerHour,
 }) {
   const [fuelAmount, setFuelAmount] = useState("");
   const [isFilled] = useState(false);
@@ -40,6 +41,10 @@ function FuelConsumptionCalculator({
   return (
     <div className="fuel-consumption-calculator">
       <h2>Споживання пального</h2>
+      <p>
+        Середня витрата пального: {averageFuelConsumptionPerHour.toFixed(2)} л /
+        годину
+      </p>
       <div className="input-group mb-3">
         <input
           type="text"
