@@ -4,8 +4,10 @@ import Pagination from "./Pagination";
 function FuelConsumptionCalculator({
   onFuelFilled,
   fuelHistory,
+  setFuelHistory,
   onDeleteFuelEntry,
   averageFuelConsumptionPerHour,
+  setTotalFuelConsumed,
 }) {
   const [fuelAmount, setFuelAmount] = useState("");
   const [isFilled] = useState(false);
@@ -38,6 +40,12 @@ function FuelConsumptionCalculator({
   const endIndex = startIndex + itemsPerPage;
   const displayedFuelHistory = sortedFuelHistory.slice(startIndex, endIndex);
 
+  const handleClearFuelHistory = () => {
+    setFuelHistory([]);
+    setTotalFuelConsumed(0);
+    localStorage.removeItem("fuelHistory");
+  };
+
   return (
     <div className="fuel-consumption-calculator">
       <h2>Споживання пального</h2>
@@ -61,7 +69,16 @@ function FuelConsumptionCalculator({
           Залити пальне
         </button>
       </div>
-      <h6 className="d-flex ">Історія заправок пальним</h6>
+      <div className="d-flex justify-content-between">
+        <h6 className="d-flex ">Історія заправок пальним</h6>
+        <button
+          onClick={handleClearFuelHistory}
+          className="btn btn-sm btn-danger mb-1"
+        >
+          Видалити всю історію
+        </button>
+      </div>
+
       <ul className="list-group">
         {displayedFuelHistory.map((entry, index) => (
           <li

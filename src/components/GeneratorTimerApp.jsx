@@ -142,7 +142,7 @@ function GeneratorTimer() {
 
   const averageFuelConsumptionPerHour =
     totalFuelConsumed > 0
-      ? totalFuelConsumed / (totalWorkingTimeInSeconds / 3600) // Перетворюємо час в години
+      ? totalFuelConsumed / (totalWorkingTimeInSeconds / 3600)
       : 0;
 
   return (
@@ -170,6 +170,8 @@ function GeneratorTimer() {
       <FuelConsumptionCalculator
         onFuelFilled={handleFuelFilled}
         fuelHistory={fuelHistory}
+        setFuelHistory={setFuelHistory}
+        setTotalFuelConsumed={setTotalFuelConsumed}
         onDeleteFuelEntry={handleDeleteFuelEntry}
         averageFuelConsumptionPerHour={averageFuelConsumptionPerHour}
       />
